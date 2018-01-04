@@ -1,5 +1,3 @@
-package task5;
-
 import library.Book;
 
 import java.util.Arrays;

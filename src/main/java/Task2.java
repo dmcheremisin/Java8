@@ -1,5 +1,3 @@
-package task2;
-
 /**
  * Created by Dmitrii on 03.01.2018.
  */
