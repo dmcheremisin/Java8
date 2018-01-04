@@ -2,14 +2,13 @@ package task5;
 
 import library.Book;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collector;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
+
+import static library.Book.Topic.FICTION;
 
 /**
  * Created by Dmitrii on 04.01.2018.
@@ -43,6 +42,10 @@ public class Task5 {
                 .flatMapToInt(b -> IntStream.of(b.getPageCounts()))
                 .sum();
         System.out.println(total);
+
+        // any fiction book
+        Optional<Book> any = library.stream().filter(b -> FICTION.equals(b.getTopic())).findAny();
+        System.out.println(any.orElse(new Book()).getTitle());
 
     }
 }
