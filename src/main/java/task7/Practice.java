@@ -1,10 +1,12 @@
 package task7;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingInt;
 
 /**
  * Created by Dmitrii on 05.01.2018.
@@ -29,14 +31,13 @@ public class Practice {
         // Query 1: Find all transactions from year 2011 and sort them by value (small to high).
         List<Transaction> query1 = transactions.stream()
                 .filter(t -> t.getYear() == 2011)
-                .sorted(Comparator.comparingInt(Transaction::getValue))
+                .sorted(comparingInt(Transaction::getValue))
                 .collect(Collectors.toList());
         printQuery(query1);
 
         // Query 2: What are all the unique cities where the traders work?
         List<String> query2 = transactions.stream()
-                .map(Transaction::getTrader)
-                .map(Trader::getCity)
+                .map(t -> t.getTrader().getCity())
                 .distinct()
                 .collect(Collectors.toList());
         printQuery(query2);
@@ -46,7 +47,7 @@ public class Practice {
                 .map(Transaction::getTrader)
                 .distinct()
                 .filter(t -> "Cambridge".equals(t.getCity()))
-                .sorted(Comparator.comparing(Trader::getName))
+                .sorted(comparing(Trader::getName))
                 .collect(Collectors.toList());
         printQuery(query3);
 
@@ -55,7 +56,7 @@ public class Practice {
         String query4 = transactions.stream()
                 .map(Transaction::getTrader)
                 .distinct()
-                .sorted(Comparator.comparing(Trader::getName))
+                .sorted(comparing(Trader::getName))
                 .map(Trader::getName)
                 .reduce("", (name1, name2) -> name1 + ", " + name2);
         System.out.println(query4);
@@ -80,7 +81,10 @@ public class Practice {
         printQuery(query6);
 
         // Query 7: What's the highest value in all the transactions?
-        Optional<Integer> first = transactions.stream().map(Transaction::getValue).sorted((t1, t2) -> t2 - t1).findFirst();
+        Optional<Integer> first = transactions.stream()
+                .map(Transaction::getValue)
+                .sorted((t1, t2) -> t2 - t1)
+                .findFirst();
         System.out.println(first.orElse(0));
     }
 
