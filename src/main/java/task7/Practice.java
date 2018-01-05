@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Created by Dmitrii on 05.01.2018.
@@ -54,22 +55,34 @@ public class Practice {
 
         // Query 4: Return a string of all traders’ names sorted alphabetically.
         String query4 = transactions.stream()
-                .map(Transaction::getTrader)
+                .map(t -> t.getTrader().getName())
                 .distinct()
-                .sorted(comparing(Trader::getName))
-                .map(Trader::getName)
-                .reduce("", (name1, name2) -> name1 + ", " + name2);
+                .sorted()
+                .reduce("Traders: ", (name1, name2) -> name1 + ", " + name2);
+        System.out.println(query4);
+        System.out.println(" ========================================= ");
+        // OR
+        query4 = transactions.stream()
+                .map(t -> t.getTrader().getName())
+                .distinct()
+                .sorted()
+                .collect(joining(", "));
         System.out.println(query4);
         System.out.println(" ========================================= ");
 
         // Query 5: Are there any trader based in Milan?
         boolean query5 = transactions.stream()
-                .map(Transaction::getTrader)
-                .anyMatch(t -> "Milan".equals(t.getCity()));
+                .anyMatch(t -> "Milan".equals(t.getTrader().getCity()));
         System.out.println(query5);
         System.out.println(" ========================================= ");
 
         // Query 6: Update all transactions so that the traders from Milan are set to Cambridge.
+        transactions.stream()
+                .map(Transaction::getTrader)
+                .distinct()
+                .filter(t -> "Milan".equals(t.getCity()))
+                .forEach(t -> t.setCity("Cambridge"));
+
         transactions.stream()
                 .map(Transaction::getTrader)
                 .distinct()
@@ -81,11 +94,28 @@ public class Practice {
         printQuery(query6);
 
         // Query 7: What's the highest value in all the transactions?
+        Optional<Integer> max = transactions.stream().map(Transaction::getValue).max(Integer::compareTo);
+        System.out.println(max.orElse(0));
+        // OR
+        max = transactions.stream().map(Transaction::getValue).reduce((a, b) -> a > b ? a : b);
+        max.ifPresent(System.out::println);
+        // OR
+        max = transactions.stream().map(Transaction::getValue).reduce(Integer::max);
+        max.ifPresent(System.out::println);
+        // OR
         Optional<Integer> first = transactions.stream()
                 .map(Transaction::getValue)
                 .sorted((t1, t2) -> t2 - t1)
                 .findFirst();
         System.out.println(first.orElse(0));
+        System.out.println(" ========================================= ");
+
+        // Query 8: Find transction with a minimum value
+        Optional<Transaction> minTransaction = transactions.stream().min(comparing(Transaction::getValue));
+        System.out.println(minTransaction.orElse(null));
+        minTransaction = transactions.stream().reduce((t1, t2) -> t1.getValue() < t2.getValue() ? t1 : t2);
+        minTransaction.ifPresent(System.out::print);
+
     }
 
     private static void printQuery(List list) {
